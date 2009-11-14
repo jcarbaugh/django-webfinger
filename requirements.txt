@@ -1,0 +1,1 @@
+-e git://github.com/jcarbaugh/django-wellknown.git#egg=wellknown

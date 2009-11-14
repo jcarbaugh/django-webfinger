@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+	
+	<Subject>{{ subject }}</Subject>
+	
+	{% if expires %}<Expires>{{ expires }}</Expires>{% endif %}
+	
+	{% if aliases %}
+		{% for alias in aliases %}
+		<Alias>{{ alias }}</Alias>
+		{% endfor %}
+	{% endif %}
+	
+	{% if types %}
+		{% for type in types %}
+		<Type>{{ type }}</Type>
+		{% endfor %}
+	{% endif %}
+	
+	{% for link in links %}
+	<Link>
+		
+		{% if link.titles %}
+			{% for title in link.titles %}
+			<Title>{{ title }}</Title>
+			{% endfor %}
+		{% endif %}
+		
+		{% for rel in link.rels %}
+			<Rel>{{ rel }}</Rel>
+		{% endfor %}
+		
+		{% if link.media_type %}<MediaType>{{ link.media_type }}</MediaType>{% endif %}
+		
+		{% if link.uri %}
+			<URI>{{ link.uri }}</URI>
+		{% else %}
+			{% if link.uri_template %}
+				<URITemplate>{{ link.uri_template }}</URITemplate>
+			{% endif %}
+		{% endif %}
+		
+	</Link>
+	{% endfor %}
+	
+</XRD>
