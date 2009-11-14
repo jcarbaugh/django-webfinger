@@ -1,30 +1,32 @@
 from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xml.dom.minidom import parseString
 import re
 
 endpoint_hander = None
 
-ACCT_RE = re.compile(r'(?:acct:)?(?P<local>[\w.!#$%&\'*+-/=?^_`{|}~]+)@(?P<host>[\w.:-]+)')
+ACCT_RE = re.compile(r'(?:acct:)?(?P<userinfo>[\w.!#$%&\'*+-/=?^_`{|}~]+)@(?P<host>[\w.:-]+)')
 
 def _force_list(v):
     if v is not None:
-        if isinstance(v, basestring):
-            return [v]
-        return v
+        if isinstance(v, (list, tuple)):
+            return v
+        return [v]
 
 class Acct(object):
     def __init__(self, acct):
-        m = ACCT_RE.match(s)
+        m = ACCT_RE.match(acct)
         if not m:
             raise ValueError('invalid acct format')
-        (local, host) = m.groups()
-        self.local = local
+        (userinfo, host) = m.groups()
+        self.userinfo = userinfo
         self.host = host
     def __unicode__(self):
-        return u"acct:%s@%s" % (self.local, self.host)
+        return u"acct:%s@%s" % (self.userinfo, self.host)
 
 class XRDResponse(HttpResponse):
 
-    def __init__(self, subject=None, **kwargs):
+    def __init__(self, subject=None, pretty=False, **kwargs):
         from django.conf import settings
         content_type = 'text/plain' if settings.DEBUG else 'application/xrd+xml'
         super(XRDResponse, self).__init__(content_type=content_type, **kwargs)
@@ -34,6 +36,7 @@ class XRDResponse(HttpResponse):
             'aliases': [],
             'types': [],
         }
+        self._pretty = pretty
 
     def add_alias(self, alias):
         self._xrd['aliases'].append(alias)
@@ -47,7 +50,7 @@ class XRDResponse(HttpResponse):
         self._xrd['expires'] = expires.isoformat()
         return self
 
-    def add_link(self, rels, uri=None, uri_template=None, media_type=None, titles=None):
+    def register_link(self, rels, uri=None, uri_template=None, media_type=None, titles=None):
             
         link = {
             'media_type': media_type,
@@ -66,6 +69,8 @@ class XRDResponse(HttpResponse):
 
     def __iter__(self):
         content = render_to_string('webfinger/xrd.xml', self._xrd)
+        if self._pretty:
+            raise NotImplementedError('prettying is not yet implemented')
         self._iterator = iter((content),)
         return self
 
