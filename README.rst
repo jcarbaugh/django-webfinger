@@ -6,6 +6,8 @@ django-webfinger
 
 Provide webfinger service.
 
+http://code.google.com/p/webfinger/wiki/WebFingerProtocol
+
 Requirements
 ============
 
