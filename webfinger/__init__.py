@@ -26,7 +26,7 @@ class Acct(object):
 
 class XRDResponse(HttpResponse):
 
-    def __init__(self, subject=None, pretty=False, **kwargs):
+    def __init__(self, subject=None, **kwargs):
         from django.conf import settings
         content_type = 'text/plain' if settings.DEBUG else 'application/xrd+xml'
         super(XRDResponse, self).__init__(content_type=content_type, **kwargs)
@@ -36,7 +36,6 @@ class XRDResponse(HttpResponse):
             'aliases': [],
             'types': [],
         }
-        self._pretty = pretty
 
     def add_alias(self, alias):
         self._xrd['aliases'].append(alias)
@@ -69,23 +68,5 @@ class XRDResponse(HttpResponse):
 
     def __iter__(self):
         content = render_to_string('webfinger/xrd.xml', self._xrd)
-        if self._pretty:
-            raise NotImplementedError('prettying is not yet implemented')
         self._iterator = iter((content),)
         return self
-
-def init():
-    
-    from django.core.urlresolvers import reverse
-    from django.contrib.sites.models import Site
-    from webfinger.rel import DESCRIBEDBY, WEBFINGER
-    import wellknown
-    
-    endpoint = reverse('webfinger_endpoint', args=('__var__',)).replace('__var__', '{uri}')
-    uri_template = "http://%s%s" % (Site.objects.get_current().domain, endpoint)
-
-    wellknown.hostmeta.register_link(
-        rels=(DESCRIBEDBY, WEBFINGER),
-        uri_template=uri_template,
-        title='Resource Descriptor',
-    )
