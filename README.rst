@@ -41,12 +41,12 @@ Handler Function
 	from webfinger import rel
 	import datetime
 	
-	def handler_func(acct, response):
+	def handler_func(acct, xrd):
 		# acct.userinfo is the username
 		# acct.host is the host
-	    response.xrd.aliases.append('http://example.com/profile/%s/' % acct.userinfo)
-	    response.xrd.expires = datetime.datetime.utcnow() + datetime.timedelta(0, 10)
-	    response.xrd.links.append(Link(
+	    xrd.aliases.append('http://example.com/profile/%s/' % acct.userinfo)
+	    xrd.expires = datetime.datetime.utcnow() + datetime.timedelta(0, 10)
+	    xrd.links.append(Link(
 	        rel=rel.AUTHOR,
 	        href='http://jeremy.carbauja.com',
 	        type='text/html',

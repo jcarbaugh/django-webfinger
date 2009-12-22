@@ -12,6 +12,6 @@ HANDLER = getattr(import_module(mod_name), func_name)
 
 def endpoint(request, uri):
     acct = webfinger.Acct(uri)
-    xrd = webfinger.XRDResponse(subject=acct)
-    HANDLER(acct, xrd)
-    return xrd
+    response = webfinger.XRDResponse(subject=acct)
+    HANDLER(acct, response._xrd)
+    return response

@@ -31,9 +31,9 @@ class XRDResponse(HttpResponse):
         from django.conf import settings
         content_type = 'text/plain' if settings.DEBUG else 'application/xrd+xml'
         super(XRDResponse, self).__init__(content_type=content_type, **kwargs)
-        self.xrd = XRD()
+        self._xrd = XRD()
 
     def __iter__(self):
-        content = render_to_string('webfinger/xrd.xml', self.xrd.to_xml())
+        content = render_to_string('webfinger/xrd.xml', self._xrd.to_xml())
         self._iterator = iter((content),)
         return self
