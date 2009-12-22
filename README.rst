@@ -13,6 +13,8 @@ Requirements
 
 python >= 2.5
 
+python-xrd
+
 django >= 1.0
 
 django-wellknown
@@ -46,14 +48,13 @@ Handler Function
 	from webfinger import rel
 	import datetime
 	
-	def handler_func(acct, xrd):
+	def handler_func(acct, response):
 		# acct.userinfo is the username
 		# acct.host is the host
-	    xrd.add_alias('http://example.com/profile/%s/' % acct.userinfo)
-	    xrd.set_expires(datetime.datetime.utcnow() + datetime.timedelta(0, 10))
-	    xrd.register_link(
-	        rels=(rel.AUTHOR, rel.HCARD, rel.PROFILE),
-	        uri='http://jeremy.carbauja.com',
-	        titles='this is me!',
-	        media_type='text/html',
-	    )
+	    response.xrd.aliases.append('http://example.com/profile/%s/' % acct.userinfo)
+	    response.xrd.expires = datetime.datetime.utcnow() + datetime.timedelta(0, 10)
+	    response.xrd.links.append(Link(
+	        rel=rel.AUTHOR,
+	        href='http://jeremy.carbauja.com',
+	        type='text/html',
+	    ))

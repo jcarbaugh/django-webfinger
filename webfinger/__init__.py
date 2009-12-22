@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from xml.dom.minidom import parseString
+from xrd import XRD
 import re
 
 endpoint_hander = None
@@ -30,43 +31,9 @@ class XRDResponse(HttpResponse):
         from django.conf import settings
         content_type = 'text/plain' if settings.DEBUG else 'application/xrd+xml'
         super(XRDResponse, self).__init__(content_type=content_type, **kwargs)
-        self._xrd = {
-            'subject': subject,
-            'links': [],
-            'aliases': [],
-            'types': [],
-        }
-
-    def add_alias(self, alias):
-        self._xrd['aliases'].append(alias)
-        return self
-    
-    def add_type(self, type_):    
-        self._xrd['types'].append(type_)
-        return self
-    
-    def set_expires(self, expires):
-        self._xrd['expires'] = expires.isoformat()
-        return self
-
-    def register_link(self, rels, uri=None, uri_template=None, media_type=None, titles=None):
-            
-        link = {
-            'media_type': media_type,
-            'rels': _force_list(rels),
-            'titles': _force_list(titles),
-        }
-        
-        if uri:
-            link['uri'] = uri
-        elif uri_template:
-            link['uri_template'] = uri_template
-        else:
-            raise ValueError('one of uri or uri_template is required')
-            
-        self._xrd['links'].append(link)
+        self.xrd = XRD()
 
     def __iter__(self):
-        content = render_to_string('webfinger/xrd.xml', self._xrd)
+        content = render_to_string('webfinger/xrd.xml', self.xrd.to_xml())
         self._iterator = iter((content),)
         return self
