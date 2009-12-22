@@ -26,13 +26,6 @@ Be sure to add ``webfinger`` to ``INSTALLED_APPS`` in settings.py. Additionally,
 
 	urls(r'^webfinger/', include('webfinger.urls')),
 
-And later in urls.py::
-
-	import webfinger
-	webfinger.init()
-
-The plan is to get rid of the ``init()`` call, but I need to put more effort into it.
-
 Configure the webfinger handler in settings.py::
 
 	WEBFINGER_HANDLER = 'path.to.handler.func'
