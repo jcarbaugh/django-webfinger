@@ -34,6 +34,6 @@ class XRDResponse(HttpResponse):
         self._xrd = XRD()
 
     def __iter__(self):
-        content = render_to_string('webfinger/xrd.xml', self._xrd.to_xml())
+        content = self._xrd.to_xml()
         self._iterator = iter((content),)
         return self
