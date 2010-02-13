@@ -34,6 +34,6 @@ class XRDResponse(HttpResponse):
         self._xrd = XRD()
 
     def __iter__(self):
-        content = self._xrd.to_xml()
+        content = self._xrd.to_xml().toxml()
         self._iterator = iter((content),)
         return self
