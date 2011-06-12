@@ -1,6 +1,4 @@
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-from xml.dom.minidom import parseString
 from xrd import XRD
 import re
 
@@ -8,11 +6,13 @@ endpoint_hander = None
 
 ACCT_RE = re.compile(r'(?:acct:)?(?P<userinfo>[\w.!#$%&\'*+-/=?^_`{|}~]+)@(?P<host>[\w.:-]+)')
 
+
 def _force_list(v):
     if v is not None:
         if isinstance(v, (list, tuple)):
             return v
         return [v]
+
 
 class Acct(object):
     def __init__(self, acct):
@@ -22,8 +22,10 @@ class Acct(object):
         (userinfo, host) = m.groups()
         self.userinfo = userinfo
         self.host = host
+
     def __unicode__(self):
         return u"acct:%s@%s" % (self.userinfo, self.host)
+
 
 class XRDResponse(HttpResponse):
 
