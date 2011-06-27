@@ -4,7 +4,8 @@ import re
 
 endpoint_hander = None
 
-ACCT_RE = re.compile(r'(?:acct:)?(?P<userinfo>[\w.!#$%&\'*+-/=?^_`{|}~]+)@(?P<host>[\w.:-]+)')
+ACCT_RE = re.compile(
+    r'(?:acct:)?(?P<userinfo>[\w.!#$%&\'*+-/=?^_`{|}~]+)@(?P<host>[\w.:-]+)')
 
 
 def _force_list(v):
@@ -30,12 +31,14 @@ class Acct(object):
 class XRDResponse(HttpResponse):
 
     def __init__(self, subject=None, **kwargs):
-        from django.conf import settings
-        content_type = 'text/plain' if settings.DEBUG else 'application/xrd+xml'
+        content_type = 'application/xrd+xml'
         super(XRDResponse, self).__init__(content_type=content_type, **kwargs)
         self._xrd = XRD()
 
     def __iter__(self):
-        content = self._xrd.to_xml().toxml()
+        content = self._xrd.to_xml()
+        xml = content.toprettyxml(indent='  ')
+        expr = re.compile(r'>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
+        content = expr.sub(r'>\g<1></', xml)
         self._iterator = iter((content),)
         return self
