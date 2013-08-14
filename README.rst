@@ -24,7 +24,7 @@ Installation
 
 Be sure to add ``webfinger`` to ``INSTALLED_APPS`` in settings.py. Additionally, add the following entry to urls.py::
 
-	urls(r'^webfinger/', include('webfinger.urls')),
+	url(r'^webfinger/', include('webfinger.urls')),
 
 Configure the webfinger handler in settings.py::
 
@@ -41,7 +41,7 @@ Handler Function
 	from webfinger import rel
 	import datetime
 	
-	def handler_func(acct, xrd):
+	def handler_func(request, acct, xrd):
 		# acct.userinfo is the username
 		# acct.host is the host
 	    xrd.aliases.append('http://example.com/profile/%s/' % acct.userinfo)
